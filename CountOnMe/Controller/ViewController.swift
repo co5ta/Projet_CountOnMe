@@ -31,27 +31,17 @@ class ViewController: UIViewController {
         
         expression.append(numberText)
     }
-    
-    @IBAction func tappedAdditionButton(_ sender: UIButton) {
-        if calculator.canAddOperator {
-            expression.append(" + ")
-        } else {
-            let alertVC = UIAlertController(title: "Zéro!", message: "Un operateur est déja mis !", preferredStyle: .alert)
-            alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-            self.present(alertVC, animated: true, completion: nil)
-        }
-    }
-    
-    @IBAction func tappedSubstractionButton(_ sender: UIButton) {
-        if calculator.canAddOperator {
-            expression.append(" - ")
-        } else {
-            let alertVC = UIAlertController(title: "Zéro!", message: "Un operateur est déja mis !", preferredStyle: .alert)
-            alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-            self.present(alertVC, animated: true, completion: nil)
-        }
-    }
 
+    @IBAction func tappedOperatorButton(_ sender: UIButton) {
+        if calculator.canAddOperator {
+            if let symbol = sender.currentTitle {
+                expression.append(" \(symbol) ")
+            }
+        } else {
+            presentAlert(title: "Zero!", message: "An operator is already put")
+        }
+    }
+    
     @IBAction func tappedEqualButton(_ sender: UIButton) {
         guard calculator.expressionIsCorrect else {
             let alertVC = UIAlertController(title: "Zéro!", message: "Entrez une expression correcte !", preferredStyle: .alert)
@@ -78,6 +68,8 @@ class ViewController: UIViewController {
             switch operand {
             case "+": result = left + right
             case "-": result = left - right
+            case "x": result = left * right
+            case "÷": result = left / right
             default: fatalError("Unknown operator !")
             }
             
@@ -88,5 +80,10 @@ class ViewController: UIViewController {
         expression.append(" = \(operationsToReduce.first!)")
     }
 
+    private func presentAlert(title: String, message: String) {
+        let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+        self.present(alertVC, animated: true, completion: nil)
+    }
 }
 
