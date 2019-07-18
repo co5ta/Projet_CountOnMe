@@ -33,26 +33,22 @@ class ViewController: UIViewController {
     }
 
     @IBAction func tappedOperatorButton(_ sender: UIButton) {
-        if calculator.canAddOperator {
-            if let symbol = sender.currentTitle {
-                expression.append(" \(symbol) ")
-            }
-        } else {
-            presentAlert(title: "Zero!", message: "An operator is already put")
+        guard calculator.canAddOperator else {
+            return presentAlert(title: "Zero!", message: "An operator is already put")
+        }
+        
+        if let symbol = sender.currentTitle {
+            expression.append(" \(symbol) ")
         }
     }
     
     @IBAction func tappedEqualButton(_ sender: UIButton) {
         guard calculator.expressionIsCorrect else {
-            let alertVC = UIAlertController(title: "Zéro!", message: "Entrez une expression correcte !", preferredStyle: .alert)
-            alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-            return self.present(alertVC, animated: true, completion: nil)
+            return presentAlert(title: "Zero!", message: "Enter a correct expression")
         }
         
         guard calculator.expressionHaveEnoughElement else {
-            let alertVC = UIAlertController(title: "Zéro!", message: "Démarrez un nouveau calcul !", preferredStyle: .alert)
-            alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-            return self.present(alertVC, animated: true, completion: nil)
+            return presentAlert(title: "Zero!", message: "Start a new calculation")
         }
         
         // Create local copy of operations
