@@ -14,10 +14,6 @@
         <scene sceneID="BSq-PH-znu">
             <objects>
                 <viewController id="eqK-jh-KKu" customClass="ViewController" customModule="CountOnMe" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="tQO-Y2-VWE"/>
-                        <viewControllerLayoutGuide type="bottom" id="Fhl-dE-gDl"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="eIh-hr-C95">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -225,18 +221,18 @@
                         </subviews>
                         <color key="backgroundColor" red="0.87536688539999996" green="0.84808511389999996" blue="0.83804947389999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="T2H-yn-nBB" firstAttribute="top" secondItem="tQO-Y2-VWE" secondAttribute="bottom" id="BN1-KY-icq"/>
+                            <constraint firstItem="T2H-yn-nBB" firstAttribute="top" secondItem="hdA-F2-ntk" secondAttribute="top" id="BN1-KY-icq"/>
                             <constraint firstItem="ogr-Aw-e1h" firstAttribute="leading" secondItem="T2H-yn-nBB" secondAttribute="leading" id="Hk8-sF-oUn"/>
-                            <constraint firstItem="T2H-yn-nBB" firstAttribute="centerX" secondItem="eIh-hr-C95" secondAttribute="centerX" id="LPR-ge-bjq"/>
+                            <constraint firstItem="T2H-yn-nBB" firstAttribute="centerX" secondItem="hdA-F2-ntk" secondAttribute="centerX" id="LPR-ge-bjq"/>
                             <constraint firstItem="ogr-Aw-e1h" firstAttribute="trailing" secondItem="T2H-yn-nBB" secondAttribute="trailing" id="T3s-Ux-YZj"/>
-                            <constraint firstItem="AWJ-Vl-uau" firstAttribute="trailing" secondItem="T2H-yn-nBB" secondAttribute="trailing" constant="16" id="Zlw-XB-eFK"/>
+                            <constraint firstItem="hdA-F2-ntk" firstAttribute="trailing" secondItem="T2H-yn-nBB" secondAttribute="trailing" constant="16" id="Zlw-XB-eFK"/>
                             <constraint firstItem="isI-Gg-Iye" firstAttribute="top" secondItem="T2H-yn-nBB" secondAttribute="bottom" constant="20" id="Zv7-hd-Grh"/>
                             <constraint firstItem="isI-Gg-Iye" firstAttribute="leading" secondItem="T2H-yn-nBB" secondAttribute="leading" id="jxk-qw-b8e"/>
-                            <constraint firstItem="T2H-yn-nBB" firstAttribute="leading" secondItem="AWJ-Vl-uau" secondAttribute="leading" constant="16" id="n7Z-cf-dM1"/>
-                            <constraint firstItem="AWJ-Vl-uau" firstAttribute="bottom" secondItem="ogr-Aw-e1h" secondAttribute="bottom" constant="20" id="wmz-Rn-Pea"/>
+                            <constraint firstItem="T2H-yn-nBB" firstAttribute="leading" secondItem="hdA-F2-ntk" secondAttribute="leading" constant="16" id="n7Z-cf-dM1"/>
+                            <constraint firstItem="hdA-F2-ntk" firstAttribute="bottom" secondItem="ogr-Aw-e1h" secondAttribute="bottom" constant="20" id="wmz-Rn-Pea"/>
                             <constraint firstItem="isI-Gg-Iye" firstAttribute="trailing" secondItem="T2H-yn-nBB" secondAttribute="trailing" id="xjY-sJ-Irj"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="AWJ-Vl-uau"/>
+                        <viewLayoutGuide key="safeArea" id="hdA-F2-ntk"/>
                     </view>
                     <connections>
                         <outlet property="textView" destination="T2H-yn-nBB" id="yqe-Yo-Sag"/>
