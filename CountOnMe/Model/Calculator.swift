@@ -9,8 +9,10 @@
 import Foundation
 
 struct Calculator {
+    /// Expression to calculate
     var expression = "" 
     
+    /// Array of elements that are in the expression
     var elements: [String] {
         return expression.split(separator: " ").map { "\($0)" }
     }
@@ -34,28 +36,49 @@ struct Calculator {
 }
 
 extension Calculator {
+    /// Give the result of the expression
     func getResult() -> String {
-        // Create local copy of operations
         var operationsToReduce = elements
-        
-        // Iterate over operations while an operand still here
         while operationsToReduce.count > 1 {
-            let left = Int(operationsToReduce[0])!
-            let operand = operationsToReduce[1]
-            let right = Int(operationsToReduce[2])!
+            let operandIndex = getOperandIndex(from: operationsToReduce)
+            let operation = getOperation(from: operationsToReduce, at: operandIndex)
+            let result = calculate(left: operation.left, operand: operation.operand, right: operation.right)
             
-            let result: Int
-            switch operand {
-            case "+": result = left + right
-            case "-": result = left - right
-            case "x": result = left * right
-            case "÷": result = left / right
-            default: fatalError("Unknown operator !")
-            }
-            
-            operationsToReduce = Array(operationsToReduce.dropFirst(3))
-            operationsToReduce.insert("\(result)", at: 0)
+            operationsToReduce[operandIndex] = "\(result)"
+            operationsToReduce.remove(at: operandIndex + 1)
+            operationsToReduce.remove(at: operandIndex - 1)
         }
         return operationsToReduce[0]
+    }
+    
+    /// Pick the index of an operator
+    private func getOperandIndex(from elements: [String]) -> Int {
+        if let index = elements.firstIndex(where: { $0 == "x" || $0 == "÷"}) {
+            return index
+        } else {
+            return 1
+        }
+    }
+    
+    /// Get a part of the expression to make a simple calculation
+    private func getOperation(from elements: [String], at index: Int) -> (left: Int, operand: String, right: Int) {
+        let operand = elements[index]
+        guard let left = Int(elements[index - 1]), let right = Int(elements[index + 1]) else {
+            fatalError("A number could not be recognized")
+        }
+        return (left, operand, right)
+    }
+    
+    /// Calculate an operation between to number
+    private func calculate(left: Int, operand: String, right: Int) -> Int {
+        let result: Int
+        switch operand {
+        case "+": result = left + right
+        case "-": result = left - right
+        case "x": result = left * right
+        case "÷": result = left / right
+        default: fatalError("Unknown operator !")
+        }
+        return result
     }
 }
