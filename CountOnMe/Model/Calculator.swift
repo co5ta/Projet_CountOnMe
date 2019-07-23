@@ -44,7 +44,7 @@ extension Calculator {
             let operation = getOperation(from: operationsToReduce, at: operandIndex)
             let result = calculate(left: operation.left, operand: operation.operand, right: operation.right)
             
-            operationsToReduce[operandIndex] = "\(result)"
+            operationsToReduce[operandIndex] = result
             operationsToReduce.remove(at: operandIndex + 1)
             operationsToReduce.remove(at: operandIndex - 1)
         }
@@ -61,17 +61,17 @@ extension Calculator {
     }
     
     /// Get a part of the expression to make a simple calculation
-    private func getOperation(from elements: [String], at index: Int) -> (left: Int, operand: String, right: Int) {
+    private func getOperation(from elements: [String], at index: Int) -> (left: Float, operand: String, right: Float) {
         let operand = elements[index]
-        guard let left = Int(elements[index - 1]), let right = Int(elements[index + 1]) else {
+        guard let left = Float(elements[index - 1]), let right = Float(elements[index + 1]) else {
             fatalError("A number could not be recognized")
         }
         return (left, operand, right)
     }
     
     /// Calculate an operation between to number
-    private func calculate(left: Int, operand: String, right: Int) -> Int {
-        let result: Int
+    private func calculate(left: Float, operand: String, right: Float) -> String {
+        let result: Float
         switch operand {
         case "+": result = left + right
         case "-": result = left - right
@@ -79,6 +79,15 @@ extension Calculator {
         case "÷": result = left / right
         default: fatalError("Unknown operator !")
         }
-        return result
+        
+        return format(number: result)
+    }
+    
+    private func format(number: Float) -> String {
+        if floorf(number) == number {
+            return "\(Int(number))"
+        } else {
+            return "\(number)"
+        }
     }
 }
