@@ -41,8 +41,8 @@ extension Calculator {
         var operationsToReduce = elements
         while operationsToReduce.count > 1 {
             let operandIndex = getOperandIndex(from: operationsToReduce)
-            let operation = getOperation(from: operationsToReduce, at: operandIndex)
-            let result = calculate(left: operation.left, operand: operation.operand, right: operation.right)
+            guard let operation = getOperation(from: operationsToReduce, at: operandIndex) else { return "Error" }
+            guard let result = calculate(left: operation.left, operand: operation.operand, right: operation.right) else { return "Error"}
             
             operationsToReduce[operandIndex] = result
             operationsToReduce.remove(at: operandIndex + 1)
@@ -61,16 +61,14 @@ extension Calculator {
     }
     
     /// Get a part of the expression to make a simple calculation
-    private func getOperation(from elements: [String], at index: Int) -> (left: Float, operand: String, right: Float) {
+    private func getOperation(from elements: [String], at index: Int) -> (left: Float, operand: String, right: Float)? {
         let operand = elements[index]
-        guard let left = Float(elements[index - 1]), let right = Float(elements[index + 1]) else {
-            fatalError("A number could not be recognized")
-        }
+        guard let left = Float(elements[index - 1]), let right = Float(elements[index + 1]) else { return nil }
         return (left, operand, right)
     }
     
     /// Calculate an operation between to number
-    private func calculate(left: Float, operand: String, right: Float) -> String {
+    private func calculate(left: Float, operand: String, right: Float) -> String? {
         let result: Float
         switch operand {
         case "+": result = left + right
@@ -80,7 +78,11 @@ extension Calculator {
         default: fatalError("Unknown operator !")
         }
         
-        return format(number: result)
+        if result.isInfinite {
+            return nil
+        } else {
+            return format(number: result)
+        }
     }
     
     private func format(number: Float) -> String {
