@@ -11,6 +11,7 @@ import UIKit
 class ViewController: UIViewController {
     @IBOutlet weak var textView: UITextView!
     @IBOutlet var numberButtons: [UIButton]!
+    @IBOutlet weak var cancelButton: UIButton!
     
     var calculator = Calculator()
     
@@ -19,6 +20,12 @@ class ViewController: UIViewController {
             calculator.elements = expression.split(separator: " ").map { "\($0)" }
             textView.text = expression
         }
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(longPressedCancelButton))
+        cancelButton.addGestureRecognizer(longPress)
     }
     
     // View actions
@@ -65,6 +72,10 @@ class ViewController: UIViewController {
             character = expression.removeLast()
         }
         
+    }
+    
+    @objc func longPressedCancelButton() {
+        expression = "0"
     }
     
     private func presentAlert(title: String, message: String) {

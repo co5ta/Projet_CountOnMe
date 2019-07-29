@@ -246,6 +246,7 @@
                         <viewLayoutGuide key="safeArea" id="hdA-F2-ntk"/>
                     </view>
                     <connections>
+                        <outlet property="cancelButton" destination="tD9-5G-V0G" id="KMt-G3-No9"/>
                         <outlet property="textView" destination="T2H-yn-nBB" id="yqe-Yo-Sag"/>
                         <outletCollection property="numberButtons" destination="YD6-ul-r3f" collectionClass="NSMutableArray" id="c8W-uL-ZHg"/>
                         <outletCollection property="numberButtons" destination="Raa-av-x4n" collectionClass="NSMutableArray" id="P52-Zx-bMS"/>
