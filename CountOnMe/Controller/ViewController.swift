@@ -14,9 +14,13 @@ class ViewController: UIViewController {
     @IBOutlet weak var cancelButton: UIButton!
     
     var calculator = Calculator()
+    var defaultValue = "0"
     
     var expression = "" {
         didSet {
+            if expression.isEmpty {
+                expression = defaultValue
+            }
             calculator.elements = expression.split(separator: " ").map { "\($0)" }
             textView.text = expression
         }
@@ -32,11 +36,11 @@ class ViewController: UIViewController {
     @IBAction func tappedNumberButton(_ sender: UIButton) {
         guard let numberText = sender.title(for: .normal) else { return }
         
-        if calculator.expressionHaveResult {
-            expression = ""
+        if calculator.expressionHaveResult || expression == defaultValue {
+            expression = numberText
+        } else {
+            expression.append(numberText)
         }
-        
-        expression.append(numberText)
     }
 
     @IBAction func tappedOperatorButton(_ sender: UIButton) {
@@ -71,11 +75,10 @@ class ViewController: UIViewController {
         while character == " " && !expression.isEmpty {
             character = expression.removeLast()
         }
-        
     }
     
     @objc func longPressedCancelButton() {
-        expression = "0"
+        expression.removeAll()
     }
     
     private func presentAlert(title: String, message: String) {
