@@ -16,7 +16,7 @@ class ViewController: UIViewController {
     
     var expression = "" {
         didSet {
-            calculator.expression = expression
+            calculator.elements = expression.split(separator: " ").map { "\($0)" }
             textView.text = expression
         }
     }
@@ -37,13 +37,17 @@ class ViewController: UIViewController {
             return presentAlert(title: "Zero!", message: "An operator is already put")
         }
         
+        if calculator.expressionHaveResult, let result = calculator.elements.last{
+            expression = "\(result)"
+        }
+        
         if let symbol = sender.currentTitle {
             expression.append(" \(symbol) ")
         }
     }
     
     @IBAction func tappedEqualButton(_ sender: UIButton) {
-        guard calculator.expressionIsCorrect else {
+        guard calculator.expressionIsCorrect, !calculator.expressionHaveResult else {
             return presentAlert(title: "Zero!", message: "Enter a correct expression")
         }
         
@@ -54,7 +58,15 @@ class ViewController: UIViewController {
         let result = calculator.getResult()
         expression.append(" = \(result)")
     }
-
+    
+    @IBAction func tappedCancelButton(_ sender: UIButton) {
+        var character: Character = " "
+        while character == " " && !expression.isEmpty {
+            character = expression.removeLast()
+        }
+        
+    }
+    
     private func presentAlert(title: String, message: String) {
         let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alertVC.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))

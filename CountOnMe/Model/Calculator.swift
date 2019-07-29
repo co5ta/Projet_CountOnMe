@@ -9,13 +9,8 @@
 import Foundation
 
 struct Calculator {
-    /// Expression to calculate
-    var expression = "" 
-    
     /// Array of elements that are in the expression
-    var elements: [String] {
-        return expression.split(separator: " ").map { "\($0)" }
-    }
+    var elements = [String]()
     
     // Error check computed variables
     var expressionIsCorrect: Bool {
@@ -31,7 +26,8 @@ struct Calculator {
     }
     
     var expressionHaveResult: Bool {
-        return expression.firstIndex(of: "=") != nil
+        print(elements)
+        return elements.firstIndex(of: "=") != nil
     }
 }
 
