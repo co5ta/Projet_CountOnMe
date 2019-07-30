@@ -71,6 +71,14 @@ class ViewController: UIViewController {
     }
     
     @IBAction func tappedCancelButton(_ sender: UIButton) {
+        if calculator.expressionHaveResult {
+            expression.removeAll()
+        } else {
+            removeLastCharacter()
+        }
+    }
+    
+    private func removeLastCharacter() {
         var character: Character = " "
         while character == " " && !expression.isEmpty {
             character = expression.removeLast()
