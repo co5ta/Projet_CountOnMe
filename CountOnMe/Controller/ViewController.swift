@@ -44,7 +44,7 @@ class ViewController: UIViewController {
     }
 
     @IBAction func tappedOperatorButton(_ sender: UIButton) {
-        guard calculator.canAddOperator else {
+        guard calculator.lastElementIsNotOperator else {
             return presentAlert(title: "Zero!", message: "An operator is already put")
         }
         
@@ -58,7 +58,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func tappedEqualButton(_ sender: UIButton) {
-        guard calculator.expressionIsCorrect, !calculator.expressionHaveResult else {
+        guard calculator.lastElementIsNotOperator, !calculator.expressionHaveResult else {
             return presentAlert(title: "Zero!", message: "Enter a correct expression")
         }
         

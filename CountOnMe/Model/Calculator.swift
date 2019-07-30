@@ -12,22 +12,38 @@ struct Calculator {
     /// Array of elements that are in the expression
     var elements = [String]()
     
-    // Error check computed variables
-    var expressionIsCorrect: Bool {
-        return elements.last != "+" && elements.last != "-"
-    }
-    
     var expressionHaveEnoughElement: Bool {
         return elements.count >= 3
     }
     
-    var canAddOperator: Bool {
-        return elements.last != "+" && elements.last != "-"
+    var lastElementIsNotOperator: Bool {
+        if let lastElement = elements.last, allOperators.contains(lastElement) {
+            return false
+        } else {
+            return true
+        }
     }
     
     var expressionHaveResult: Bool {
-        print(elements)
         return elements.firstIndex(of: "=") != nil
+    }
+    
+    /// Array of all operators
+    var allOperators: [String] {
+        return Operator.allCases.map { $0.rawValue }
+    }
+}
+
+// MARK: Operators
+
+extension Calculator {
+    /// The Operators available in the calculator
+    enum Operator: String, CaseIterable {
+        /// Calculation operator
+        case addition = "+"
+        case substration = "-"
+        case multiplication = "x"
+        case division = "÷"
     }
 }
 
@@ -81,6 +97,7 @@ extension Calculator {
         }
     }
     
+    /// Format the display of the result as a decimal or a integer
     private func format(number: Float) -> String {
         if floorf(number) == number {
             return "\(Int(number))"
