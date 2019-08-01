@@ -45,7 +45,7 @@ class Calculator {
     
     /// Return true if the expression contains the result of the operation
     var expressionHaveResult: Bool {
-        return elements.firstIndex(of: "=") != nil
+        return elements.contains("=")
     }
     
     /// Array of all operands
@@ -90,8 +90,7 @@ extension Calculator {
     
     /// Add the result of the operation to the expression
     func addResult() {
-        guard !lastElementIsOperand, !expressionHaveResult else { return }
-        guard expressionHaveEnoughElement else { return }
+        guard expressionHaveEnoughElement, !lastElementIsOperand, !expressionHaveResult else { return }
         expression.append(" = \(getResult())")
     }
     
@@ -125,16 +124,14 @@ extension Calculator {
 extension Calculator {
     /// Give the result of the expression
     private func getResult() -> String {
-        var operationsToReduce = elements
-        while operationsToReduce.count > 1 {
-            let operandIndex = getOperandIndex(from: operationsToReduce)
-            guard let operation = getOperation(from: operationsToReduce, at: operandIndex) else { return "Error" }
-            guard let result = calculate(left: operation.left, symbol: operation.operand, right: operation.right) else { return "Error"}
-            operationsToReduce[operandIndex] = result
-            operationsToReduce.remove(at: operandIndex + 1)
-            operationsToReduce.remove(at: operandIndex - 1)
+        var elementsToReduce = elements
+        while elementsToReduce.count > 1 {
+            let operandIndex = getOperandIndex(from: elementsToReduce)
+            guard let operation = getOperation(from: elementsToReduce, at: operandIndex) else { return "Error" }
+            guard let result = calculate(left: operation.left, symbol: operation.operand, right: operation.right) else { return "Infinity"}
+            elementsToReduce = reduce(elementsToReduce, with: result, at: operandIndex)
         }
-        return operationsToReduce[0]
+        return elementsToReduce[0]
     }
     
     /// Pick the index of an operand
@@ -177,5 +174,14 @@ extension Calculator {
         } else {
             return "\(number)"
         }
+    }
+    
+    /// Reduce the array of elements with a result
+    private func reduce(_ elements: [String], with result:String, at index: Int) -> [String] {
+        var elementsToReduce = elements
+        elementsToReduce[index] = result
+        elementsToReduce.remove(at: index + 1)
+        elementsToReduce.remove(at: index - 1)
+        return elementsToReduce
     }
 }
