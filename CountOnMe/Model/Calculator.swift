@@ -104,10 +104,11 @@ extension Calculator {
     
     /// Remove the last character of the expression
     private func removeLastEntry() {
-        var character: Character
-        repeat {
-            character = expression.removeLast()
-        } while character == " "
+        if expression.last == " " {
+            expression.removeLast(3)
+        } else {
+            expression.removeLast()
+        }
     }
     
     /// Notification to tell that the expression has changed
