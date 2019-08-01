@@ -25,27 +25,19 @@ class ViewController: UIViewController {
     /// The object which calculate the operations
     var calculator = Calculator()
     
-    /// Default value of the expression
-    var defaultValue = "0"
-    
-    /// The expression which indicates the operation
-    var expression = "" {
-        didSet {
-            if expression.isEmpty {
-                expression = defaultValue
-            }
-            calculator.elements = expression.split(separator: " ").map { "\($0)" }
-            textView.text = expression
-        }
-    }
-    
     // MARK: Life Cycle
     
     /// Initialisation of the view
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // long press gesture
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(longPressedCancelButton))
         cancelButton.addGestureRecognizer(longPress)
+        
+        // notification listening
+        let name = Notification.Name("ExpressionUpdated")
+        NotificationCenter.default.addObserver(self, selector: #selector(updateTextView), name: name, object: nil)
     }
 }
 
@@ -54,64 +46,34 @@ class ViewController: UIViewController {
 extension ViewController {
     /// Action when a number is tapped
     @IBAction func tappedNumberButton(_ sender: UIButton) {
-        guard let numberText = sender.title(for: .normal) else { return }
-        
-        if calculator.expressionHaveResult || expression == defaultValue {
-            expression = numberText
-        } else {
-            expression.append(numberText)
-        }
+        guard let number = sender.title(for: .normal) else { return }
+        calculator.add(number: number)
     }
 
     /// Action when an operator is tapped
     @IBAction func tappedOperatorButton(_ sender: UIButton) {
-        guard calculator.lastElementIsNotOperator && !expression.isEmpty else {
-            return presentAlert(title: "Zero!", message: "An operator is already put")
-        }
-        
-        if calculator.expressionHaveResult, let result = calculator.elements.last{
-            expression = "\(result)"
-        }
-        
-        if let symbol = sender.currentTitle {
-            expression.append(" \(symbol) ")
-        }
+        guard let symbol = sender.currentTitle else { return }
+        calculator.add(operand: symbol)
     }
     
     /// Action when the button equal is tapped
     @IBAction func tappedEqualButton(_ sender: UIButton) {
-        guard calculator.lastElementIsNotOperator, !calculator.expressionHaveResult else {
-            return presentAlert(title: "Zero!", message: "Enter a correct expression")
-        }
-        
-        guard calculator.expressionHaveEnoughElement else {
-            return presentAlert(title: "Zero!", message: "Start a new calculation")
-        }
-        
-        let result = calculator.getResult()
-        expression.append(" = \(result)")
+        calculator.addResult()
     }
     
     /// Action when an the cancel button is tapped
     @IBAction func tappedCancelButton(_ sender: UIButton) {
-        if calculator.expressionHaveResult {
-            expression.removeAll()
-        } else {
-            removeLastCharacter()
-        }
-    }
-    
-    /// Remove the last character of the expression
-    private func removeLastCharacter() {
-        var character: Character = " "
-        while character == " " && !expression.isEmpty {
-            character = expression.removeLast()
-        }
+        calculator.cancel()
     }
     
     /// Action after the cancel button is long pressed
     @objc func longPressedCancelButton() {
-        expression.removeAll()
+        calculator.cancel(fully: true)
+    }
+    
+    /// Update the textView
+    @objc func updateTextView() {
+        textView.text = calculator.expression
     }
     
     /**

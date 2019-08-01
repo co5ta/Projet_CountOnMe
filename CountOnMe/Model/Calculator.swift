@@ -8,19 +8,34 @@
 
 import Foundation
 
-struct Calculator {
+class Calculator {
+    /// The expression which indicates the operation
+    var expression = "" {
+        didSet {
+            if expression.isEmpty {
+                expression = defaultValue
+            }
+            refresh()
+        }
+    }
+    
+    /// Default value of the expression
+    var defaultValue = "0"
+    
     /// Array of elements that are in the expression
-    var elements = [String]()
+    var elements: [String] {
+        return expression.split(separator: " ").map { "\($0)" }
+    }
     
     var expressionHaveEnoughElement: Bool {
         return elements.count >= 3
     }
     
-    var lastElementIsNotOperator: Bool {
+    var lastElementIsOperator: Bool {
         if let lastElement = elements.last, allOperators.contains(lastElement) {
-            return false
-        } else {
             return true
+        } else {
+            return false
         }
     }
     
@@ -48,14 +63,35 @@ extension Calculator {
 }
 
 extension Calculator {
+    func add(number: String) {
+        if expressionHaveResult || expression == defaultValue {
+            expression = number
+        } else {
+            expression.append(number)
+        }
+    }
+    
+    func add(operand: String) {
+        guard !lastElementIsOperator && !expression.isEmpty else { return }
+        if expressionHaveResult, let result = elements.last {
+            expression = "\(result)"
+        }
+        expression.append(" \(operand) ")
+    }
+    
+    func addResult() {
+        guard !lastElementIsOperator, !expressionHaveResult else { return }
+        guard expressionHaveEnoughElement else { return }
+        expression.append(" = \(getResult())")
+    }
+    
     /// Give the result of the expression
-    func getResult() -> String {
+    private func getResult() -> String {
         var operationsToReduce = elements
         while operationsToReduce.count > 1 {
             let operandIndex = getOperandIndex(from: operationsToReduce)
             guard let operation = getOperation(from: operationsToReduce, at: operandIndex) else { return "Error" }
-            guard let result = calculate(left: operation.left, operand: operation.operand, right: operation.right) else { return "Error"}
-            
+            guard let result = calculate(left: operation.left, symbol: operation.operand, right: operation.right) else { return "Error"}
             operationsToReduce[operandIndex] = result
             operationsToReduce.remove(at: operandIndex + 1)
             operationsToReduce.remove(at: operandIndex - 1)
@@ -80,29 +116,50 @@ extension Calculator {
     }
     
     /// Calculate an operation between to number
-    private func calculate(left: Float, operand: String, right: Float) -> String? {
+    private func calculate(left: Float, symbol: String, right: Float) -> String? {
+        guard let operand = Operator(rawValue: symbol) else { fatalError("Unknown operator !") }
         let result: Float
+        
         switch operand {
-        case "+": result = left + right
-        case "-": result = left - right
-        case "x": result = left * right
-        case "÷": result = left / right
-        default: fatalError("Unknown operator !")
+        case .addition: result = left + right
+        case .substration: result = left - right
+        case .multiplication: result = left * right
+        case .division: result = left / right
         }
         
-        if result.isInfinite {
-            return nil
-        } else {
-            return format(number: result)
-        }
+        return format(number: result)
     }
     
     /// Format the display of the result as a decimal or a integer
-    private func format(number: Float) -> String {
-        if floorf(number) == number {
+    private func format(number: Float) -> String? {
+        if number.isInfinite {
+            return nil
+        } else if floorf(number) == number {
             return "\(Int(number))"
         } else {
             return "\(number)"
         }
+    }
+    
+    func cancel(fully: Bool = false) {
+        if expressionHaveResult || fully == true {
+            expression.removeAll()
+        } else {
+            removeLastEntry()
+        }
+    }
+    
+    /// Remove the last character of the expression
+    private func removeLastEntry() {
+        var character: Character = " "
+        while character == " " && !expression.isEmpty {
+            character = expression.removeLast()
+        }
+    }
+    
+    func refresh() {
+        let name = Notification.Name("ExpressionUpdated")
+        let notification = Notification(name: name)
+        NotificationCenter.default.post(notification)
     }
 }
