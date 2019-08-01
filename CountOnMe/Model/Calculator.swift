@@ -14,9 +14,7 @@ class Calculator {
     /// The expression which indicates the operation
     var expression = "" {
         didSet {
-            if expression.isEmpty {
-                expression = defaultValue
-            }
+            if expression.isEmpty { expression = defaultValue }
             refresh()
         }
     }
@@ -75,6 +73,7 @@ extension Calculator {
         if expressionHaveResult || expression == defaultValue {
             expression = number
         } else {
+            if elements.last == defaultValue { cancel() }
             expression.append(number)
         }
     }
