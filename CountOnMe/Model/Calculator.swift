@@ -9,6 +9,8 @@
 import Foundation
 
 class Calculator {
+    // MARK: Properties
+    
     /// The expression which indicates the operation
     var expression = "" {
         didSet {
@@ -22,39 +24,42 @@ class Calculator {
     /// Default value of the expression
     var defaultValue = "0"
     
-    /// Array of elements that are in the expression
+    /// Array of elements which are in the expression
     var elements: [String] {
         return expression.split(separator: " ").map { "\($0)" }
     }
     
+    /// Return true if the expression have enough elements to do a calculation
     var expressionHaveEnoughElement: Bool {
         return elements.count >= 3
     }
     
-    var lastElementIsOperator: Bool {
-        if let lastElement = elements.last, allOperators.contains(lastElement) {
+    /// Return true if the last element of the expression is an operand
+    var lastElementIsOperand: Bool {
+        if let lastElement = elements.last, allOperands.contains(lastElement) {
             return true
         } else {
             return false
         }
     }
     
+    /// Return true if the expression contains the result of the operation
     var expressionHaveResult: Bool {
         return elements.firstIndex(of: "=") != nil
     }
     
-    /// Array of all operators
-    var allOperators: [String] {
-        return Operator.allCases.map { $0.rawValue }
+    /// Array of all operands
+    var allOperands: [String] {
+        return Operand.allCases.map { $0.rawValue }
     }
 }
 
-// MARK: Operators
+// MARK: - Operands
 
 extension Calculator {
-    /// The Operators available in the calculator
-    enum Operator: String, CaseIterable {
-        /// Calculation operator
+    /// The Operands available in the calculator
+    enum Operand: String, CaseIterable {
+        /// Calculation operand
         case addition = "+"
         case substration = "-"
         case multiplication = "x"
@@ -62,7 +67,10 @@ extension Calculator {
     }
 }
 
+// MARK: - Expression edition
+
 extension Calculator {
+    /// Add a number to the expression
     func add(number: String) {
         if expressionHaveResult || expression == defaultValue {
             expression = number
@@ -71,20 +79,50 @@ extension Calculator {
         }
     }
     
+    /// Add an operand to the expression
     func add(operand: String) {
-        guard !lastElementIsOperator && !expression.isEmpty else { return }
+        guard !lastElementIsOperand && !expression.isEmpty else { return }
         if expressionHaveResult, let result = elements.last {
             expression = "\(result)"
         }
         expression.append(" \(operand) ")
     }
     
+    /// Add the result of the operation to the expression
     func addResult() {
-        guard !lastElementIsOperator, !expressionHaveResult else { return }
+        guard !lastElementIsOperand, !expressionHaveResult else { return }
         guard expressionHaveEnoughElement else { return }
         expression.append(" = \(getResult())")
     }
     
+    /// Remove some entry from the expression
+    func cancel(fully: Bool = false) {
+        if expressionHaveResult || fully == true {
+            expression.removeAll()
+        } else if !expression.isEmpty {
+            removeLastEntry()
+        }
+    }
+    
+    /// Remove the last character of the expression
+    private func removeLastEntry() {
+        var character: Character
+        repeat {
+            character = expression.removeLast()
+        } while character == " "
+    }
+    
+    /// Notification to tell that the expression has changed
+    func refresh() {
+        let name = Notification.Name("ExpressionUpdated")
+        let notification = Notification(name: name)
+        NotificationCenter.default.post(notification)
+    }
+}
+
+// MARK: - Expression calculation
+
+extension Calculator {
     /// Give the result of the expression
     private func getResult() -> String {
         var operationsToReduce = elements
@@ -99,7 +137,7 @@ extension Calculator {
         return operationsToReduce[0]
     }
     
-    /// Pick the index of an operator
+    /// Pick the index of an operand
     private func getOperandIndex(from elements: [String]) -> Int {
         if let index = elements.firstIndex(where: { $0 == "x" || $0 == "÷"}) {
             return index
@@ -117,7 +155,7 @@ extension Calculator {
     
     /// Calculate an operation between to number
     private func calculate(left: Float, symbol: String, right: Float) -> String? {
-        guard let operand = Operator(rawValue: symbol) else { fatalError("Unknown operator !") }
+        guard let operand = Operand(rawValue: symbol) else { fatalError("Unknown operand !") }
         let result: Float
         
         switch operand {
@@ -130,7 +168,7 @@ extension Calculator {
         return format(number: result)
     }
     
-    /// Format the display of the result as a decimal or a integer
+    /// Format the display of the result as a decimal or an integer
     private func format(number: Float) -> String? {
         if number.isInfinite {
             return nil
@@ -139,27 +177,5 @@ extension Calculator {
         } else {
             return "\(number)"
         }
-    }
-    
-    func cancel(fully: Bool = false) {
-        if expressionHaveResult || fully == true {
-            expression.removeAll()
-        } else {
-            removeLastEntry()
-        }
-    }
-    
-    /// Remove the last character of the expression
-    private func removeLastEntry() {
-        var character: Character = " "
-        while character == " " && !expression.isEmpty {
-            character = expression.removeLast()
-        }
-    }
-    
-    func refresh() {
-        let name = Notification.Name("ExpressionUpdated")
-        let notification = Notification(name: name)
-        NotificationCenter.default.post(notification)
     }
 }

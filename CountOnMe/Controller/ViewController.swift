@@ -50,8 +50,8 @@ extension ViewController {
         calculator.add(number: number)
     }
 
-    /// Action when an operator is tapped
-    @IBAction func tappedOperatorButton(_ sender: UIButton) {
+    /// Action when an operand is tapped
+    @IBAction func tappedOperandButton(_ sender: UIButton) {
         guard let symbol = sender.currentTitle else { return }
         calculator.add(operand: symbol)
     }
