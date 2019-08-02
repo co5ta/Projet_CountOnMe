@@ -9,10 +9,14 @@
 import Foundation
 
 class Calculator {
+    init() {
+        expression = defaultValue
+    }
+    
     // MARK: Properties
     
     /// The expression which indicates the operation
-    var expression = "" {
+    var expression: String {
         didSet {
             if expression.isEmpty { expression = defaultValue }
             refresh()
@@ -127,8 +131,8 @@ extension Calculator {
         var elementsToReduce = elements
         while elementsToReduce.count > 1 {
             let operandIndex = getOperandIndex(from: elementsToReduce)
-            guard let operation = getOperation(from: elementsToReduce, at: operandIndex) else { return "Error" }
-            guard let result = calculate(left: operation.left, symbol: operation.operand, right: operation.right) else { return "Infinity"}
+            guard let operation = getOperation(from: elementsToReduce, at: operandIndex) else { return "Bad operation" }
+            guard let result = calculate(left: operation.left, symbol: operation.operand, right: operation.right) else { return "Error"}
             elementsToReduce = reduce(elementsToReduce, with: result, at: operandIndex)
         }
         return elementsToReduce[0]
@@ -152,7 +156,7 @@ extension Calculator {
     
     /// Calculate an operation between to number
     private func calculate(left: Float, symbol: String, right: Float) -> String? {
-        guard let operand = Operand(rawValue: symbol) else { fatalError("Unknown operand !") }
+        guard let operand = Operand(rawValue: symbol) else { return nil }
         let result: Float
         
         switch operand {
@@ -167,7 +171,7 @@ extension Calculator {
     
     /// Format the display of the result as a decimal or an integer
     private func format(number: Float) -> String? {
-        if number.isInfinite {
+        if number.isInfinite || number.isNaN {
             return nil
         } else if floorf(number) == number {
             return "\(Int(number))"
