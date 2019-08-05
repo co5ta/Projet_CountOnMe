@@ -55,7 +55,7 @@ class Calculator {
     }
 }
 
-// MARK: - Operands
+// MARK: - Operand enum
 
 extension Calculator {
     /// The Operands available in the calculator
@@ -66,6 +66,13 @@ extension Calculator {
         case multiplication = "x"
         case division = "÷"
     }
+}
+
+// MARK: Operation tuple
+
+extension Calculator {
+    /// Tuple that represents an operation as part of the expression
+    typealias Operation = (left: Float, operand: Operand, right: Float)
 }
 
 // MARK: - Expression edition
@@ -132,7 +139,7 @@ extension Calculator {
         while elementsToReduce.count > 1 {
             let operandIndex = getOperandIndex(from: elementsToReduce)
             guard let operation = getOperation(from: elementsToReduce, at: operandIndex) else { return "Bad operation" }
-            guard let result = calculate(left: operation.left, symbol: operation.operand, right: operation.right) else { return "Error"}
+            guard let result = calculate(operation) else { return "Error"}
             elementsToReduce = reduce(elementsToReduce, with: result, at: operandIndex)
         }
         return elementsToReduce[0]
@@ -147,18 +154,19 @@ extension Calculator {
     }
     
     /// Get a part of the expression to make a simple calculation
-    private func getOperation(from elements: [String], at index: Int) -> (left: Float, operand: String, right: Float)? {
-        let operand = elements[index]
+    private func getOperation(from elements: [String], at index: Int) -> Operation? {
+        guard let operand = Operand(rawValue: elements[index]) else { return nil }
         guard let left = Float(elements[index - 1]), let right = Float(elements[index + 1]) else { return nil }
         return (left, operand, right)
     }
     
     /// Calculate an operation between to number
-    private func calculate(left: Float, symbol: String, right: Float) -> String? {
-        guard let operand = Operand(rawValue: symbol) else { return nil }
+    private func calculate(_ operation: Operation) -> String? {
+        let left = operation.left
+        let right = operation.right
         let result: Float
         
-        switch operand {
+        switch operation.operand {
         case .addition: result = left + right
         case .substration: result = left - right
         case .multiplication: result = left * right

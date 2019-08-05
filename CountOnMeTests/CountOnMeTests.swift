@@ -140,7 +140,15 @@ class CountOnMeTests: XCTestCase {
         calculator.add(operand: "%")
         calculator.add(number: "3")
         calculator.addResult()
-        XCTAssertEqual(calculator.expression, "10 % 3 = Error")
+        XCTAssertEqual(calculator.expression, "10 % 3 = Bad operation")
+    }
+    
+    func testGivenExpressionContainsBadCharacter_WhenCalculating_ThenResultIsBadOperation() {
+        calculator.add(number: "6")
+        calculator.add(operand: "x")
+        calculator.add(number: "P")
+        calculator.addResult()
+        XCTAssertEqual(calculator.expression, "6 x P = Bad operation")
     }
     
     func testGivenExpressionIsTenPlus_WhenAddingMinus_ThenExpressionIsTenMinus() {
