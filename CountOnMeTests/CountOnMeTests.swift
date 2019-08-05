@@ -142,4 +142,11 @@ class CountOnMeTests: XCTestCase {
         calculator.addResult()
         XCTAssertEqual(calculator.expression, "10 % 3 = Error")
     }
+    
+    func testGivenExpressionIsTenPlus_WhenAddingMinus_ThenExpressionIsTenMinus() {
+        calculator.add(number: "10")
+        calculator.add(operand: "+")
+        calculator.add(operand: "-")
+        XCTAssertEqual(calculator.expression, "10 - ")
+    }
 }

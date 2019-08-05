@@ -40,9 +40,8 @@ class Calculator {
     var lastElementIsOperand: Bool {
         if let lastElement = elements.last, allOperands.contains(lastElement) {
             return true
-        } else {
-            return false
         }
+        return false
     }
     
     /// Return true if the expression contains the result of the operation
@@ -84,9 +83,10 @@ extension Calculator {
     
     /// Add an operand to the expression
     func add(operand: String) {
-        guard !lastElementIsOperand && !expression.isEmpty else { return }
-        if expressionHaveResult, let result = elements.last {
-            expression = "\(result)"
+        if expressionHaveResult {
+            expression = "\(elements.last!)"
+        } else if lastElementIsOperand {
+            cancel()
         }
         expression.append(" \(operand) ")
     }
@@ -142,9 +142,8 @@ extension Calculator {
     private func getOperandIndex(from elements: [String]) -> Int {
         if let index = elements.firstIndex(where: { $0 == "x" || $0 == "÷"}) {
             return index
-        } else {
-            return 1
         }
+        return 1
     }
     
     /// Get a part of the expression to make a simple calculation
@@ -175,9 +174,8 @@ extension Calculator {
             return nil
         } else if floorf(number) == number {
             return "\(Int(number))"
-        } else {
-            return "\(number)"
         }
+        return "\(number)"
     }
     
     /// Reduce the array of elements with a result
