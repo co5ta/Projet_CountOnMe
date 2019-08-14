@@ -107,7 +107,15 @@ class CountOnMeTests: XCTestCase {
         XCTAssertEqual(calculator.expression, "5 + ")
     }
     
+    func testGivenExpressionIsDefaultValue_WhenAddingOperatorFirst_ThenExpressionDoesNotBeginByAnOperand() {
+        calculator.add(operand: "+")
+        calculator.add(number: "5")
+        calculator.addResult()
+        XCTAssertEqual(calculator.expression, "0 + 5 = 5")
+    }
+    
     func testGivenExpressionIsFivePlusZeroFive_WhenCalculatingTotal_ThenResultIsTen() {
+        calculator.add(number: "0")
         calculator.add(number: "5")
         calculator.add(operand: "+")
         calculator.add(number: "0")
